@@ -21,7 +21,7 @@ export const ProfilePage = () => {
             queryClient.invalidateQueries({ queryKey: ['userDetails'] });
             alert('Profile picture updated successfully!');
         },
-        onError: (error: any) => {
+        onError: () => {
             alert('Failed to upload profile picture');
         },
     });
