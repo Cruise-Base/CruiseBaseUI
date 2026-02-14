@@ -20,4 +20,14 @@ export const authService = {
         const response = await api.get('/api/user/details');
         return response.data;
     },
+    uploadProfilePicture: async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await api.post('/api/user/profile-picture', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    },
 };

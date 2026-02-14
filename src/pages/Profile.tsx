@@ -1,16 +1,37 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, Mail, Phone, MapPin, Shield, Camera, Loader2, Settings, Briefcase } from 'lucide-react';
+import { useRef } from 'react';
 import { authService } from '../services/authService';
 import { useAuthStore } from '../store/useAuthStore';
 
 export const ProfilePage = () => {
     const { user } = useAuthStore();
+    const queryClient = useQueryClient();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { data: userDetails, isLoading } = useQuery({
         queryKey: ['userDetails'],
         queryFn: authService.getUserDetails,
         enabled: !!user,
     });
+
+    const uploadMutation = useMutation({
+        mutationFn: authService.uploadProfilePicture,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['userDetails'] });
+            alert('Profile picture updated successfully!');
+        },
+        onError: (error: any) => {
+            alert('Failed to upload profile picture');
+        },
+    });
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            uploadMutation.mutate(file);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -39,8 +60,24 @@ export const ProfilePage = () => {
                         ) : (
                             <User className="w-12 h-12 text-slate-600" />
                         )}
+                        {uploadMutation.isPending && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                <Loader2 className="w-8 h-8 text-white animate-spin" />
+                            </div>
+                        )}
                     </div>
-                    <button className="absolute -bottom-2 -right-2 p-2.5 bg-blue-600 rounded-xl border-4 border-[#020617] text-white hover:bg-blue-500 transition-all shadow-xl">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                    />
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadMutation.isPending}
+                        className="absolute -bottom-2 -right-2 p-2.5 bg-blue-600 rounded-xl border-4 border-[#020617] text-white hover:bg-blue-500 transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
                         <Camera className="w-4 h-4" />
                     </button>
                 </div>
