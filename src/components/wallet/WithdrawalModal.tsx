@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShieldCheck, Loader2, AlertCircle } from 'lucide-react';
 import { walletService } from '../../services/walletService';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const withdrawSchema = z.object({
     amount: z.number().positive('Amount must be positive'),
