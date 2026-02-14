@@ -20,6 +20,7 @@ export const ResetPasswordPage = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token = searchParams.get('token');
+    const userId = searchParams.get('userId');
 
     const {
         register,
@@ -31,7 +32,8 @@ export const ResetPasswordPage = () => {
 
     const resetMutation = useMutation({
         mutationFn: async (data: any) => {
-            await api.post('/api/authentication/reset-password', {
+            await api.post('/api/authentication/reset-password/confirm', {
+                userId,
                 token,
                 newPassword: data.password
             });
@@ -46,8 +48,8 @@ export const ResetPasswordPage = () => {
     });
 
     const onSubmit = (data: ResetPasswordFormValues) => {
-        if (!token) {
-            alert('Invalid or missing reset token.');
+        if (!token || !userId) {
+            alert('Invalid or missing reset token or user ID.');
             return;
         }
         resetMutation.mutate(data);

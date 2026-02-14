@@ -25,7 +25,9 @@ export const ForgotPasswordPage = () => {
 
     const resetMutation = useMutation({
         mutationFn: async (data: ForgotPasswordFormValues) => {
-            await api.post('/api/authentication/forgot-password', data);
+            await api.post('/api/authentication/reset-password/request', null, {
+                params: { email: data.email }
+            });
         },
         onSuccess: () => {
             alert('If an account exists with that email, a reset link has been sent.');
