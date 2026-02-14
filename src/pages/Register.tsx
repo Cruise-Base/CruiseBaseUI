@@ -48,7 +48,11 @@ export const RegisterPage = () => {
     });
 
     const onSubmit = (data: RegisterFormValues) => {
-        registerMutation.mutate(data);
+        const payload = {
+            ...data,
+            role: data.role === 'Owner' ? 0 : 1 // 0 for Owner, 1 for Driver
+        };
+        registerMutation.mutate(payload);
     };
 
     return (
