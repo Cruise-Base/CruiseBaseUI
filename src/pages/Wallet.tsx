@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { walletService } from '../services/walletService';
+import { useAuthStore } from '../store/useAuthStore';
 import { BalanceCard } from '../components/wallet/BalanceCard';
 import { TransactionHistory } from '../components/wallet/TransactionHistory';
 import { WithdrawalModal } from '../components/wallet/WithdrawalModal';
 import { Loader2, PlusCircle, CreditCard, Landmark } from 'lucide-react';
 
 const WalletPage = () => {
+    const { user } = useAuthStore();
     const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
     const { data: wallet, isLoading: isWalletLoading } = useQuery({
@@ -34,18 +36,21 @@ const WalletPage = () => {
                 <div className="lg:col-span-2 space-y-6">
                     <BalanceCard
                         balance={wallet?.balance || 0}
+                        showFundButton={user?.role !== 'Owner'}
                     />
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <button className="flex items-center gap-4 p-6 bg-[#1e293b]/50 border border-slate-800 rounded-2xl hover:bg-slate-800 transition-all group">
-                            <div className="p-3 bg-primary/10 rounded-xl">
-                                <PlusCircle className="w-6 h-6 text-primary" />
-                            </div>
-                            <div className="text-left">
-                                <p className="font-bold text-white">Add Money</p>
-                                <p className="text-xs text-slate-500">Fund your account</p>
-                            </div>
-                        </button>
+                        {user?.role !== 'Owner' && (
+                            <button className="flex items-center gap-4 p-6 bg-[#1e293b]/50 border border-slate-800 rounded-2xl hover:bg-slate-800 transition-all group">
+                                <div className="p-3 bg-primary/10 rounded-xl">
+                                    <PlusCircle className="w-6 h-6 text-primary" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="font-bold text-white">Add Money</p>
+                                    <p className="text-xs text-slate-500">Fund your account</p>
+                                </div>
+                            </button>
+                        )}
                         <button
                             onClick={() => setIsWithdrawModalOpen(true)}
                             className="flex items-center gap-4 p-6 bg-[#1e293b]/50 border border-slate-800 rounded-2xl hover:bg-slate-800 transition-all group"

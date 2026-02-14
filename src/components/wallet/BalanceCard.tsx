@@ -4,9 +4,10 @@ import { Eye, EyeOff, TrendingUp, ArrowUpRight, ArrowDownLeft } from 'lucide-rea
 interface BalanceCardProps {
     balance: number;
     currency?: string;
+    showFundButton?: boolean;
 }
 
-export const BalanceCard = ({ balance, currency = 'NGN' }: BalanceCardProps) => {
+export const BalanceCard = ({ balance, currency = 'NGN', showFundButton = true }: BalanceCardProps) => {
     const [isVisible, setIsVisible] = useState(true);
 
     const formatCurrency = (amount: number) => {
@@ -40,11 +41,13 @@ export const BalanceCard = ({ balance, currency = 'NGN' }: BalanceCardProps) => 
                     <span className="text-slate-500 text-sm font-medium">{currency}</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <button className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-2xl transition-all group">
-                        <ArrowUpRight className="w-4 h-4 text-secondary group-hover:scale-110 transition-transform" />
-                        <span className="text-sm font-semibold">Fund Wallet</span>
-                    </button>
+                <div className={`grid ${showFundButton ? 'grid-cols-2' : 'grid-cols-1'} gap-4`}>
+                    {showFundButton && (
+                        <button className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-2xl transition-all group">
+                            <ArrowUpRight className="w-4 h-4 text-secondary group-hover:scale-110 transition-transform" />
+                            <span className="text-sm font-semibold">Fund Wallet</span>
+                        </button>
+                    )}
                     <button className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 py-3 rounded-2xl transition-all shadow-lg shadow-primary/20 group">
                         <ArrowDownLeft className="w-4 h-4 group-hover:scale-110 transition-transform" />
                         <span className="text-sm font-semibold">Withdraw</span>
