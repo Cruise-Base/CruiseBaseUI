@@ -33,4 +33,8 @@ export const authService = {
         });
         return response.data;
     },
+    updateUserDetails: async (data: any) => {
+        const response = await api.put('/api/user/details', data);
+        return response.data;
+    },
 };

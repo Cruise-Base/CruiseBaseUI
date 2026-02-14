@@ -1,13 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User, Mail, Phone, MapPin, Shield, Camera, Loader2, Settings, Briefcase } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { authService } from '../services/authService';
 import { useAuthStore } from '../store/useAuthStore';
+import { EditProfileModal } from '../components/profile/EditProfileModal';
 
 export const ProfilePage = () => {
     const { user } = useAuthStore();
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const { data: userDetails, isLoading } = useQuery({
         queryKey: ['userDetails'],
@@ -93,7 +95,10 @@ export const ProfilePage = () => {
                     <p className="text-slate-400 font-medium">@{userDetails?.username}</p>
                 </div>
 
-                <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all font-semibold text-sm">
+                <button
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all font-semibold text-sm"
+                >
                     <Settings className="w-4 h-4" />
                     Edit Profile
                 </button>
@@ -146,6 +151,13 @@ export const ProfilePage = () => {
                     </div>
                 </div>
             </div>
+
+            <EditProfileModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                currentDetails={userDetails}
+                userRole={user?.role || ''}
+            />
         </div>
     );
 };
