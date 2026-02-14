@@ -6,6 +6,7 @@ interface User {
     email: string;
     role: 'SuperAdmin' | 'Admin' | 'Owner' | 'Driver';
     fullName: string;
+    profilePicture?: string;
 }
 
 interface AuthState {

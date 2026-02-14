@@ -30,10 +30,36 @@ export const LoginPage = () => {
 
     const loginMutation = useMutation({
         mutationFn: authService.login,
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             setCredentials(data.accessToken, data.refreshToken);
-            setUser(data.user);
-            navigate('/');
+
+            try {
+                const userDetails = await authService.getUserDetails();
+
+                // Map backend roles array to frontend single role
+                // Preference: Admin > SuperAdmin > Owner > Driver
+                const roles = userDetails.roles || [];
+                let mappedRole: 'Admin' | 'SuperAdmin' | 'Owner' | 'Driver' = 'Driver';
+
+                if (roles.includes('Admin')) mappedRole = 'Admin';
+                else if (roles.includes('SuperAdmin')) mappedRole = 'SuperAdmin';
+                else if (roles.includes('Owner')) mappedRole = 'Owner';
+                else if (roles.includes('Driver')) mappedRole = 'Driver';
+
+                setUser({
+                    id: userDetails.id,
+                    email: userDetails.email,
+                    fullName: `${userDetails.firstName} ${userDetails.lastName}`,
+                    role: mappedRole,
+                    profilePicture: userDetails.pictures?.url
+                });
+
+                navigate('/');
+            } catch (error) {
+                console.error('Failed to fetch user details', error);
+                // Fallback or logout if we can't get details
+                navigate('/');
+            }
         },
         onError: (error: any) => {
             alert(error.response?.data?.message || 'Login failed');
