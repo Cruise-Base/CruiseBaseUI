@@ -9,8 +9,10 @@ import {
     LogOut,
     Menu,
     ChevronRight,
-    Bell
+    Bell,
+    User
 } from 'lucide-react';
+import logo from '../assets/logo.png';
 
 export const Layout = () => {
     const { user, logout } = useAuthStore();
@@ -25,6 +27,7 @@ export const Layout = () => {
 
     const navLinks = [
         { name: 'Dashboard', path: `/${user?.role?.toLowerCase()}`, icon: LayoutDashboard, roles: ['Admin', 'SuperAdmin', 'Owner', 'Driver'] },
+        { name: 'Profile', path: '/profile', icon: User, roles: ['Admin', 'SuperAdmin', 'Owner', 'Driver'] },
         { name: 'Wallet', path: '/wallet', icon: Wallet, roles: ['Owner', 'Driver'] },
         { name: 'My Fleet', path: '/owner/fleet', icon: Car, roles: ['Owner'] },
         { name: 'My Vehicle', path: '/driver/vehicle', icon: Car, roles: ['Driver'] },
@@ -50,8 +53,15 @@ export const Layout = () => {
       `}>
                 <div className="flex flex-col h-full">
                     {/* Logo Section */}
-                    <div className="h-20 flex items-center px-8 border-b border-slate-800">
-                        <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                    <div className="h-24 flex items-center px-6 border-b border-slate-800">
+                        {logo ? (
+                            <img src={logo} alt="CruiseBase" className="h-12 w-auto object-contain" />
+                        ) : (
+                            <div className="size-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center font-black text-white text-sm">
+                                CB
+                            </div>
+                        )}
+                        <span className="ml-3 text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                             CruiseBase
                         </span>
                     </div>
@@ -129,7 +139,10 @@ export const Layout = () => {
                             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#1e293b]"></span>
                         </button>
                         <div className="h-6 w-px bg-slate-800 mx-2" />
-                        <div className="flex items-center gap-3 pl-2">
+                        <div
+                            className="flex items-center gap-3 pl-2 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => navigate('/profile')}
+                        >
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm font-medium text-white">{user?.fullName}</p>
                                 <p className="text-xs text-slate-500 capitalize">Active {user?.role}</p>

@@ -3,14 +3,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { UserPlus, Loader2 } from 'lucide-react';
+import { Loader2, Mail, Lock, User, Phone, Briefcase, ChevronRight, ShieldCheck } from 'lucide-react';
 import { authService } from '../services/authService';
+import logo from '../assets/logo.png';
 
 const registerSchema = z.object({
-    fullName: z.string().min(3, 'Full name must be at least 3 characters'),
+    firstName: z.string().min(2, 'First name is required'),
+    lastName: z.string().min(2, 'Last name is required'),
+    username: z.string().min(3, 'Username must be at least 3 characters'),
     email: z.string().email('Invalid email address'),
+    phoneNumber: z.string().min(10, 'Invalid phone number'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    role: z.enum(['Owner', 'Driver']).optional(),
+    role: z.enum(['Owner', 'Driver']),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -21,6 +25,7 @@ export const RegisterPage = () => {
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
@@ -28,6 +33,8 @@ export const RegisterPage = () => {
             role: 'Driver',
         },
     });
+
+    const selectedRole = watch('role');
 
     const registerMutation = useMutation({
         mutationFn: authService.register,
@@ -41,106 +48,155 @@ export const RegisterPage = () => {
     });
 
     const onSubmit = (data: RegisterFormValues) => {
-        registerMutation.mutate({
-            ...data,
-            role: data.role || 'Driver'
-        });
+        registerMutation.mutate(data);
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0f172a] p-4 font-sans text-white">
-            <div className="w-full max-w-md bg-[#1e293b]/50 backdrop-blur-xl border border-slate-800 p-8 rounded-2xl shadow-2xl">
-                <div className="flex flex-col items-center mb-8">
-                    <div className="p-3 bg-secondary/10 rounded-xl mb-4">
-                        <UserPlus className="w-8 h-8 text-secondary" />
+        <div className="min-h-screen flex items-center justify-center p-6 py-12 bg-black">
+            <div className="w-full max-w-[600px] border border-slate-800 bg-slate-950 p-12 rounded-none shadow-none">
+                <div className="flex flex-col items-center mb-12 text-center">
+                    <div className="mb-8">
+                        {logo ? (
+                            <img src={logo} alt="CruiseBase" className="h-16 w-auto object-contain grayscale" />
+                        ) : (
+                            <div className="size-16 bg-blue-600 flex items-center justify-center">
+                                <span className="text-2xl font-bold text-white tracking-tighter">CB</span>
+                            </div>
+                        )}
                     </div>
-                    <h1 className="text-3xl font-bold mb-2">Join CruiseBase</h1>
-                    <p className="text-slate-400 text-center">Start managing your vehicle assets or driving career today.</p>
+                    <h1 className="text-3xl font-bold text-white tracking-tight mb-2 uppercase">Create Account</h1>
+                    <p className="text-slate-500 font-medium">
+                        Join the professional logistics network.
+                    </p>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
-                        <input
-                            {...register('fullName')}
-                            className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
-                            placeholder="John Doe"
-                        />
-                        {errors.fullName && <p className="mt-1 text-sm text-red-400">{errors.fullName.message}</p>}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label>
-                        <input
-                            {...register('email')}
-                            type="email"
-                            className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
-                            placeholder="name@example.com"
-                        />
-                        {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
-                        <input
-                            {...register('password')}
-                            type="password"
-                            className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
-                            placeholder="••••••••"
-                        />
-                        {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <label className="cursor-pointer">
-                            <input
-                                type="radio"
-                                {...register('role')}
-                                value="Driver"
-                                className="peer sr-only"
-                            />
-                            <div className="p-3 text-center border border-slate-700 rounded-lg bg-slate-900 peer-checked:border-secondary peer-checked:bg-secondary/10 transition-all">
-                                Driver
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">First Name</label>
+                            <div className="relative">
+                                <input
+                                    {...register('firstName')}
+                                    className="w-full bg-black border border-slate-800 rounded-none px-4 py-3 text-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors placeholder:text-slate-700"
+                                    placeholder="JOHN"
+                                />
                             </div>
-                        </label>
-                        <label className="cursor-pointer">
-                            <input
-                                type="radio"
-                                {...register('role')}
-                                value="Owner"
-                                className="peer sr-only"
-                            />
-                            <div className="p-3 text-center border border-slate-700 rounded-lg bg-slate-900 peer-checked:border-secondary peer-checked:bg-secondary/10 transition-all">
-                                Owner
+                            {errors.firstName && <p className="text-xs text-blue-500 font-medium mt-1">{errors.firstName.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Last Name</label>
+                            <div className="relative">
+                                <input
+                                    {...register('lastName')}
+                                    className="w-full bg-black border border-slate-800 rounded-none px-4 py-3 text-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors placeholder:text-slate-700"
+                                    placeholder="DOE"
+                                />
                             </div>
-                        </label>
+                            {errors.lastName && <p className="text-xs text-blue-500 font-medium mt-1">{errors.lastName.message}</p>}
+                        </div>
                     </div>
-                    {errors.role && <p className="mt-1 text-sm text-red-400">{errors.role.message}</p>}
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Username</label>
+                        <div className="relative">
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+                            <input
+                                {...register('username')}
+                                className="w-full bg-black border border-slate-800 rounded-none pl-12 pr-4 py-3 text-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors placeholder:text-slate-700"
+                                placeholder="johndoe88"
+                            />
+                        </div>
+                        {errors.username && <p className="text-xs text-blue-500 font-medium mt-1">{errors.username.message}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email Address</label>
+                        <div className="relative">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+                            <input
+                                {...register('email')}
+                                type="email"
+                                className="w-full bg-black border border-slate-800 rounded-none pl-12 pr-4 py-3 text-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors placeholder:text-slate-700"
+                                placeholder="name@company.com"
+                            />
+                        </div>
+                        {errors.email && <p className="text-xs text-blue-500 font-medium mt-1">{errors.email.message}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Phone Number</label>
+                        <div className="relative">
+                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+                            <input
+                                {...register('phoneNumber')}
+                                className="w-full bg-black border border-slate-800 rounded-none pl-12 pr-4 py-3 text-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors placeholder:text-slate-700"
+                                placeholder="+1 (555) 000-0000"
+                            />
+                        </div>
+                        {errors.phoneNumber && <p className="text-xs text-blue-500 font-medium mt-1">{errors.phoneNumber.message}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Password</label>
+                        <div className="relative">
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
+                            <input
+                                {...register('password')}
+                                type="password"
+                                className="w-full bg-black border border-slate-800 rounded-none pl-12 pr-4 py-3 text-white focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors placeholder:text-slate-700"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                        {errors.password && <p className="text-xs text-blue-500 font-medium mt-1">{errors.password.message}</p>}
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Select Account Type</label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <label className="cursor-pointer group/role">
+                                <input type="radio" {...register('role')} value="Driver" className="peer sr-only" />
+                                <div className="h-full p-6 border border-slate-800 bg-black hover:border-slate-600 peer-checked:border-blue-600 peer-checked:bg-blue-600/10 transition-all text-center">
+                                    <Briefcase className={`w-8 h-8 mx-auto mb-3 ${selectedRole === 'Driver' ? 'text-blue-500' : 'text-slate-600'}`} />
+                                    <span className={`text-sm font-bold uppercase tracking-wider ${selectedRole === 'Driver' ? 'text-blue-500' : 'text-slate-400'}`}>Driver</span>
+                                </div>
+                            </label>
+                            <label className="cursor-pointer group/role">
+                                <input type="radio" {...register('role')} value="Owner" className="peer sr-only" />
+                                <div className="h-full p-6 border border-slate-800 bg-black hover:border-slate-600 peer-checked:border-white peer-checked:bg-white/5 transition-all text-center">
+                                    <ShieldCheck className={`w-8 h-8 mx-auto mb-3 ${selectedRole === 'Owner' ? 'text-white' : 'text-slate-600'}`} />
+                                    <span className={`text-sm font-bold uppercase tracking-wider ${selectedRole === 'Owner' ? 'text-white' : 'text-slate-400'}`}>Owner</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
 
                     <button
                         type="submit"
                         disabled={registerMutation.isPending}
-                        className="w-full bg-secondary hover:bg-secondary/90 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-secondary/20 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 text-sm uppercase tracking-widest transition-all mt-4 border border-transparent hover:border-blue-500"
                     >
                         {registerMutation.isPending ? (
-                            <>
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                                Creating account...
-                            </>
+                            <span className="flex items-center justify-center gap-2">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Processing...
+                            </span>
                         ) : (
-                            'Create Account'
+                            <span className="flex items-center justify-center gap-2">
+                                Create Account
+                                <ChevronRight className="w-4 h-4" />
+                            </span>
                         )}
                     </button>
                 </form>
 
-                <div className="mt-8 text-center">
-                    <p className="text-slate-400 text-sm">
+                <div className="mt-12 pt-8 border-t border-slate-900 text-center">
+                    <p className="text-slate-500 text-sm">
                         Already have an account?{' '}
                         <button
                             onClick={() => navigate('/login')}
-                            className="text-primary font-medium hover:underline"
+                            className="text-white font-bold hover:text-blue-500 transition-colors uppercase text-xs tracking-wider"
                         >
-                            Login here
+                            Log In
                         </button>
                     </p>
                 </div>
