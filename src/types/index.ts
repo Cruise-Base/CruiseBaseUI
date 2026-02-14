@@ -26,7 +26,7 @@ export interface RegisterData {
     email: string;
     phoneNumber: string;
     password: string;
-    role: UserRole;
+    role: UserRole | number;
 }
 
 export interface Wallet {
