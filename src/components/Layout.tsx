@@ -36,7 +36,7 @@ export const Layout = () => {
     const navLinks = [
         { name: 'Dashboard', path: `/${user?.role?.toLowerCase()}`, icon: LayoutDashboard, roles: ['Admin', 'SuperAdmin', 'Owner', 'Driver'] },
         { name: 'Profile', path: '/profile', icon: User, roles: ['Admin', 'SuperAdmin', 'Owner', 'Driver'] },
-        { name: 'Wallet', path: '/wallet', icon: Wallet, roles: ['Owner', 'Driver'] },
+        { name: 'Wallet', path: '/wallet', icon: Wallet, roles: ['Owner'] },
         { name: 'My Fleet', path: '/owner/fleet', icon: Car, roles: ['Owner'] },
         { name: 'My Vehicle', path: '/driver/vehicle', icon: Car, roles: ['Driver'] },
         { name: 'User Management', path: '/admin/users', icon: Users, roles: ['Admin', 'SuperAdmin'] },
