@@ -12,16 +12,23 @@ export const walletService = {
         return response.data;
     },
 
-    withdraw: async (amount: number, pin: string): Promise<void> => {
-        await api.post('/api/wallet/withdraw', { amount, pin });
+    withdraw: async (amount: number, bankAccountId: string, pin: string): Promise<void> => {
+        await api.post('/api/wallet/withdraw', { amount, bankAccountId, pin });
     },
 
     setPin: async (pin: string): Promise<void> => {
-        await api.post('/api/wallet/set-pin', { pin });
+        await api.post('/api/wallet/set-pin', JSON.stringify(pin), {
+            headers: { 'Content-Type': 'application/json' }
+        });
     },
 
     getBanks: async () => {
         const response = await api.get('/api/wallet/banks');
+        return response.data;
+    },
+
+    getUserBankAccounts: async (): Promise<any[]> => {
+        const response = await api.get('/api/wallet/user-bank-accounts');
         return response.data;
     },
 

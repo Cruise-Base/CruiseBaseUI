@@ -22,7 +22,14 @@ interface WithdrawalModalProps {
 
 export const WithdrawalModal = ({ isOpen, onClose, balance }: WithdrawalModalProps) => {
     const queryClient = useQueryClient();
-    const [step, setStep] = useState<'amount' | 'pin'>('amount');
+    const [step, setStep] = useState<'amount' | 'bank' | 'pin'>('amount');
+    const [selectedBankId, setSelectedBankId] = useState<string>('');
+
+    const { data: bankAccounts, isLoading: isLoadingBanks } = useQuery({
+        queryKey: ['user-bank-accounts'],
+        queryFn: walletService.getUserBankAccounts,
+        enabled: isOpen,
+    });
 
     const {
         register,
@@ -39,12 +46,13 @@ export const WithdrawalModal = ({ isOpen, onClose, balance }: WithdrawalModalPro
     const amount = watch('amount');
 
     const withdrawMutation = useMutation({
-        mutationFn: (data: WithdrawFormValues) => walletService.withdraw(data.amount, data.pin),
+        mutationFn: (data: WithdrawFormValues) => walletService.withdraw(data.amount, selectedBankId, data.pin),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['wallet-balance'] });
             queryClient.invalidateQueries({ queryKey: ['transactions'] });
             alert('Withdrawal request submitted successfully!');
             onClose();
+            setStep('amount');
         },
         onError: (error: any) => {
             alert(error.response?.data?.message || 'Withdrawal failed');
@@ -55,6 +63,12 @@ export const WithdrawalModal = ({ isOpen, onClose, balance }: WithdrawalModalPro
         if (step === 'amount') {
             if (data.amount > balance) {
                 alert('Insufficient balance');
+                return;
+            }
+            setStep('bank');
+        } else if (step === 'bank') {
+            if (!selectedBankId) {
+                alert('Please select a bank account');
                 return;
             }
             setStep('pin');
@@ -91,7 +105,7 @@ export const WithdrawalModal = ({ isOpen, onClose, balance }: WithdrawalModalPro
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        {step === 'amount' ? (
+                        {step === 'amount' && (
                             <motion.div
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -113,6 +127,7 @@ export const WithdrawalModal = ({ isOpen, onClose, balance }: WithdrawalModalPro
                                             type="number"
                                             className="w-full pl-16 pr-4 py-4 bg-slate-900 border border-slate-700 rounded-2xl text-2xl font-bold text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all placeholder-slate-700"
                                             placeholder="0.00"
+                                            autoFocus
                                         />
                                     </div>
                                     {errors.amount && <p className="mt-2 text-sm text-red-400">{errors.amount.message}</p>}
@@ -125,7 +140,62 @@ export const WithdrawalModal = ({ isOpen, onClose, balance }: WithdrawalModalPro
                                     Continue
                                 </button>
                             </motion.div>
-                        ) : (
+                        )}
+
+                        {step === 'bank' && (
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                className="space-y-6"
+                            >
+                                <div>
+                                    <h3 className="text-lg font-semibold text-white mb-4">Select Bank Account</h3>
+                                    {isLoadingBanks ? (
+                                        <div className="flex justify-center py-8">
+                                            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {bankAccounts && bankAccounts.length > 0 ? (
+                                                bankAccounts.map((bank: any) => (
+                                                    <div
+                                                        key={bank.id}
+                                                        onClick={() => setSelectedBankId(bank.id)}
+                                                        className={`p-4 border rounded-2xl cursor-pointer transition-all ${selectedBankId === bank.id ? 'bg-primary/10 border-primary' : 'bg-slate-900 border-slate-700 hover:border-slate-500'}`}
+                                                    >
+                                                        <p className="font-bold text-white">{bank.bankName}</p>
+                                                        <p className="text-sm text-slate-400">{bank.accountNumber} - {bank.accountName}</p>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="text-center py-8 text-slate-400">
+                                                    No bank accounts linked. Please add a bank account first.
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setStep('amount')}
+                                        className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-2xl transition-all"
+                                    >
+                                        Back
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="flex-[2] bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl shadow-lg transition-all"
+                                        disabled={!selectedBankId}
+                                    >
+                                        Continue
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 'pin' && (
                             <motion.div
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -153,7 +223,7 @@ export const WithdrawalModal = ({ isOpen, onClose, balance }: WithdrawalModalPro
                                 <div className="flex gap-4">
                                     <button
                                         type="button"
-                                        onClick={() => setStep('amount')}
+                                        onClick={() => setStep('bank')}
                                         className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-2xl transition-all"
                                     >
                                         Back
