@@ -10,6 +10,8 @@ import { authService } from '../../services/authService';
 const editProfileSchema = z.object({
     firstName: z.string().min(2, 'First name is too short'),
     lastName: z.string().min(2, 'Last name is too short'),
+    userName: z.string().min(3, 'Username is too short'),
+    email: z.string().email('Invalid email address'),
     address: z.string().min(5, 'Address is too short'),
     phoneNumber: z.string().min(10, 'Phone number is too short'),
     // Role specific fields
@@ -40,11 +42,13 @@ export const EditProfileModal = ({ isOpen, onClose, currentDetails, userRole }: 
         defaultValues: {
             firstName: currentDetails?.firstName || '',
             lastName: currentDetails?.lastName || '',
+            userName: currentDetails?.userName || '',
+            email: currentDetails?.email || '',
             address: currentDetails?.address || '',
             phoneNumber: currentDetails?.phoneNumber || '',
-            licenseNumber: currentDetails?.driverProfile?.licenseNumber || '',
-            licenseExpiryDate: currentDetails?.driverProfile?.licenseExpiryDate ? new Date(currentDetails.driverProfile.licenseExpiryDate).toISOString().split('T')[0] : '',
-            staffId: currentDetails?.adminProfile?.staffId || '',
+            licenseNumber: currentDetails?.licenseNumber || '',
+            licenseExpiryDate: currentDetails?.licenseExpiryDate ? new Date(currentDetails.licenseExpiryDate).toISOString().split('T')[0] : '',
+            staffId: currentDetails?.staffId || '',
         }
     });
 
@@ -53,11 +57,13 @@ export const EditProfileModal = ({ isOpen, onClose, currentDetails, userRole }: 
             reset({
                 firstName: currentDetails.firstName || '',
                 lastName: currentDetails.lastName || '',
+                userName: currentDetails.userName || '',
+                email: currentDetails.email || '',
                 address: currentDetails.address || '',
                 phoneNumber: currentDetails.phoneNumber || '',
-                licenseNumber: currentDetails.driverProfile?.licenseNumber || '',
-                licenseExpiryDate: currentDetails.driverProfile?.licenseExpiryDate ? new Date(currentDetails.driverProfile.licenseExpiryDate).toISOString().split('T')[0] : '',
-                staffId: currentDetails.adminProfile?.staffId || '',
+                licenseNumber: currentDetails.licenseNumber || '',
+                licenseExpiryDate: currentDetails.licenseExpiryDate ? new Date(currentDetails.licenseExpiryDate).toISOString().split('T')[0] : '',
+                staffId: currentDetails.staffId || '',
             });
         }
     }, [isOpen, currentDetails, reset]);
@@ -141,6 +147,39 @@ export const EditProfileModal = ({ isOpen, onClose, currentDetails, userRole }: 
                                 </div>
                             </div>
 
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                        Username
+                                    </label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                        <input
+                                            {...register('userName')}
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-sm"
+                                            placeholder="Username"
+                                        />
+                                    </div>
+                                    {errors.userName && <p className="text-red-500 text-xs ml-1">{errors.userName.message}</p>}
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                        Email
+                                    </label>
+                                    <div className="relative">
+                                        <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                        <input
+                                            {...register('email')}
+                                            className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 outline-none transition-all text-sm opacity-60"
+                                            placeholder="Email"
+                                            readOnly
+                                        />
+                                    </div>
+                                    {errors.email && <p className="text-red-500 text-xs ml-1">{errors.email.message}</p>}
+                                </div>
+                            </div>
+
                             <div className="space-y-1.5">
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
                                     Phone Number
@@ -155,6 +194,8 @@ export const EditProfileModal = ({ isOpen, onClose, currentDetails, userRole }: 
                                 </div>
                                 {errors.phoneNumber && <p className="text-red-500 text-xs ml-1">{errors.phoneNumber.message}</p>}
                             </div>
+
+
 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
