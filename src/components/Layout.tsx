@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
+import { useQuery } from '@tanstack/react-query';
+import { authService } from '../services/authService';
 import {
     LayoutDashboard,
     Wallet,
@@ -19,6 +21,12 @@ export const Layout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+
+    const { data: userDetails } = useQuery({
+        queryKey: ['userDetails'],
+        queryFn: authService.getUserDetails,
+        enabled: !!user,
+    });
 
     const handleLogout = () => {
         logout();
@@ -98,8 +106,12 @@ export const Layout = () => {
                     {/* User Section */}
                     <div className="p-4 border-t border-slate-800 bg-[#1e293b]/50">
                         <div className="flex items-center gap-3 px-2 mb-4">
-                            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600">
-                                {user?.fullName?.charAt(0) || 'U'}
+                            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600 overflow-hidden">
+                                {userDetails?.profilePicture ? (
+                                    <img src={userDetails.profilePicture} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-sm font-bold">{user?.fullName?.charAt(0) || 'U'}</span>
+                                )}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-semibold text-white truncate">{user?.fullName}</p>
@@ -147,9 +159,13 @@ export const Layout = () => {
                                 <p className="text-sm font-medium text-white">{user?.fullName}</p>
                                 <p className="text-xs text-slate-500 capitalize">Active {user?.role}</p>
                             </div>
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary p-0.5">
-                                <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-xs font-bold">
-                                    {user?.fullName?.charAt(0)}
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary p-0.5 overflow-hidden">
+                                <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-xs font-bold overflow-hidden">
+                                    {userDetails?.profilePicture ? (
+                                        <img src={userDetails.profilePicture} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        user?.fullName?.charAt(0)
+                                    )}
                                 </div>
                             </div>
                         </div>
