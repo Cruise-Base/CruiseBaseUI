@@ -18,7 +18,10 @@ export const authService = {
 
     getUserDetails: async () => {
         const response = await api.get('/api/user/details');
-        return response.data;
+        return {
+            ...response.data,
+            username: response.data.userName,
+        };
     },
     uploadProfilePicture: async (file: File) => {
         const formData = new FormData();
