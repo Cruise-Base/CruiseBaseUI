@@ -36,28 +36,33 @@ export const LoginPage = () => {
             try {
                 const userDetails = await authService.getUserDetails();
 
-                // Map backend roles array to frontend single role
-                // Preference: Admin > SuperAdmin > Owner > Driver
-                const roles = userDetails.roles || [];
+                // Map backend roles array to frontend single role with case-insensitive check
+                const roles = (userDetails.roles || []).map((r: string) => r.toLowerCase());
                 let mappedRole: 'Admin' | 'SuperAdmin' | 'Owner' | 'Driver' = 'Driver';
+                let targetPath = '/driver';
 
-                if (roles.includes('Admin')) mappedRole = 'Admin';
-                else if (roles.includes('SuperAdmin')) mappedRole = 'SuperAdmin';
-                else if (roles.includes('Owner')) mappedRole = 'Owner';
-                else if (roles.includes('Driver')) mappedRole = 'Driver';
+                if (roles.includes('admin') || roles.includes('superadmin')) {
+                    mappedRole = roles.includes('superadmin') ? 'SuperAdmin' : 'Admin';
+                    targetPath = '/admin';
+                } else if (roles.includes('owner')) {
+                    mappedRole = 'Owner';
+                    targetPath = '/owner';
+                } else if (roles.includes('driver')) {
+                    mappedRole = 'Driver';
+                    targetPath = '/driver';
+                }
 
                 setUser({
                     id: userDetails.id,
                     email: userDetails.email,
                     fullName: `${userDetails.firstName} ${userDetails.lastName}`,
                     role: mappedRole,
-                    profilePicture: userDetails.pictures?.url
+                    profilePicture: userDetails.pictures?.pictureUrl
                 });
 
-                navigate('/');
+                navigate(targetPath);
             } catch (error) {
                 console.error('Failed to fetch user details', error);
-                // Fallback or logout if we can't get details
                 navigate('/');
             }
         },
