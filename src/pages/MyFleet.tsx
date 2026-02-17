@@ -1,13 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { vehicleService } from '@/services/vehicleService';
-import { VehicleCard } from '@/components/vehicles/VehicleCard';
+import { vehicleService } from '../services/vehicleService';
+import { VehicleCard } from '../components/vehicles/VehicleCard';
 import { Loader2, MapPin, Car, Navigation, ShieldCheck } from 'lucide-react';
 
 export const MyFleetPage = () => {
-    const { data: vehicles, isLoading, isError } = useQuery({
+    const { data: vehicles, isLoading, isError, error } = useQuery({
         queryKey: ['my-fleet'],
         queryFn: vehicleService.getVehicles,
     });
+
+    console.log('MyFleet data:', { vehicles, isLoading, isError, error });
 
     if (isLoading) {
         return (
@@ -24,10 +26,15 @@ export const MyFleetPage = () => {
                     <ShieldCheck className="w-8 h-8 text-red-500" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Failed to load fleet</h3>
-                <p className="text-slate-500">There was an error fetching your vehicles. Please try again later.</p>
+                <p className="text-slate-500">
+                    {error instanceof Error ? error.message : 'There was an error fetching your vehicles.'}
+                </p>
             </div>
         );
     }
+
+    const vehicleList = Array.isArray(vehicles) ? vehicles : [];
+    const activeVehicles = vehicleList.filter(v => v.isActive);
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -95,7 +102,7 @@ export const MyFleetPage = () => {
                                     <Car className="w-3 h-3 text-secondary" />
                                 </div>
                             </div>
-                            <span className="text-xs font-bold text-white tracking-wide">{vehicles?.length || 0} VEHICLES</span>
+                            <span className="text-xs font-bold text-white tracking-wide">{vehicleList.length} VEHICLES</span>
                         </div>
                     </div>
 
@@ -126,22 +133,22 @@ export const MyFleetPage = () => {
                 </h3>
                 <div className="flex items-center gap-2">
                     <span className="px-3 py-1 bg-slate-800 rounded-full text-[10px] font-bold text-slate-400">
-                        {vehicles?.length || 0} TOTAL
+                        {vehicleList.length} TOTAL
                     </span>
                     <span className="px-3 py-1 bg-primary/10 rounded-full text-[10px] font-bold text-primary">
-                        {vehicles?.filter(v => v.isActive).length || 0} ACTIVE
+                        {activeVehicles.length} ACTIVE
                     </span>
                 </div>
             </div>
 
             {/* Vehicle Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {vehicles?.map((vehicle) => (
+                {vehicleList.map((vehicle) => (
                     <VehicleCard key={vehicle.id} vehicle={vehicle} />
                 ))}
             </div>
 
-            {vehicles?.length === 0 && (
+            {vehicleList.length === 0 && (
                 <div className="bg-[#1e293b]/30 border border-dashed border-slate-800 rounded-[2rem] p-12 text-center">
                     <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Car className="w-8 h-8 text-slate-600" />
