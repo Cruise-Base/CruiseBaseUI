@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,13 +12,16 @@ import {
     User,
     Loader2,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    Camera,
+    Image as ImageIcon
 } from 'lucide-react';
 import { vehicleService } from '@/services/vehicleService';
 import { userService } from '@/services/userService';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import type { VehicleToCreate } from '@/types';
+import toast from 'react-hot-toast';
 
 const vehicleSchema = z.object({
     name: z.string().min(2, 'Name is required'),
@@ -40,10 +43,14 @@ interface AddVehicleModalProps {
 export const AddVehicleModal = ({ isOpen, onClose }: AddVehicleModalProps) => {
     const { user } = useAuthStore();
     const queryClient = useQueryClient();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [foundUser, setFoundUser] = useState<{ id: string, fullName: string, email: string } | null>(null);
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const {
         register,
@@ -58,17 +65,57 @@ export const AddVehicleModal = ({ isOpen, onClose }: AddVehicleModalProps) => {
         }
     });
 
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const createMutation = useMutation({
-        mutationFn: vehicleService.createVehicle,
+        mutationFn: async (data: VehicleToCreate) => {
+            const vehicle = await vehicleService.createVehicle(data);
+
+            if (selectedFile) {
+                setIsUploading(true);
+                try {
+                    await vehicleService.uploadVehiclePicture(vehicle.id, selectedFile);
+                } catch (error) {
+                    console.error('Failed to upload vehicle picture', error);
+                    toast.error('Vehicle created but picture upload failed.');
+                } finally {
+                    setIsUploading(false);
+                }
+            }
+
+            return vehicle;
+        },
         onSuccess: () => {
+            toast.success('Vehicle registered successfully!');
             queryClient.invalidateQueries({ queryKey: ['all-vehicles'] });
             queryClient.invalidateQueries({ queryKey: ['owner-progress'] });
-            onClose();
-            reset();
-            setFoundUser(null);
-            setSearchTerm('');
+            queryClient.invalidateQueries({ queryKey: ['my-fleet'] });
+            handleClose();
         },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || 'Failed to register vehicle');
+        }
     });
+
+    const handleClose = () => {
+        onClose();
+        reset();
+        setFoundUser(null);
+        setSearchTerm('');
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setIsUploading(false);
+    };
 
     const handleSearch = async () => {
         if (!searchTerm) return;
@@ -97,20 +144,20 @@ export const AddVehicleModal = ({ isOpen, onClose }: AddVehicleModalProps) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={onClose}
-                        className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+                        onClick={handleClose}
+                        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md"
                     />
 
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-2xl bg-[#1e293b] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden"
+                        className="relative w-full max-w-2xl bg-[#1e293b] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-auto"
                     >
                         {/* Header */}
                         <div className="px-8 py-6 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-primary/10 to-transparent">
@@ -124,14 +171,60 @@ export const AddVehicleModal = ({ isOpen, onClose }: AddVehicleModalProps) => {
                                 </div>
                             </div>
                             <button
-                                onClick={onClose}
+                                onClick={handleClose}
                                 className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white"
                             >
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6">
+                        <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                            {/* Image Upload Area */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Vehicle Picture</label>
+                                <div
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className={`
+                                        relative group cursor-pointer aspect-video rounded-2xl border-2 border-dashed transition-all flex flex-col items-center justify-center overflow-hidden
+                                        ${previewUrl ? 'border-primary/50 bg-primary/5' : 'border-slate-800 hover:border-slate-700 bg-slate-900/50'}
+                                    `}
+                                >
+                                    {previewUrl ? (
+                                        <>
+                                            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <div className="p-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                                                    <Camera className="w-6 h-6 text-white" />
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-3 py-8">
+                                            <div className="p-4 bg-slate-800 rounded-full text-slate-500 group-hover:text-primary transition-colors border border-slate-700">
+                                                <ImageIcon className="w-8 h-8" />
+                                            </div>
+                                            <div className="text-center">
+                                                <p className="text-sm font-bold text-white mb-1">Click to upload photo</p>
+                                                <p className="text-xs text-slate-500">Max size: 5MB (JPG, PNG)</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        accept="image/*"
+                                        className="hidden"
+                                    />
+                                    {isUploading && (
+                                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+                                            <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                                            <p className="text-xs font-bold text-white uppercase tracking-widest">Optimizing & Uploading...</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
                             {user?.role === 'Admin' || user?.role === 'SuperAdmin' ? (
                                 <div className="space-y-4 p-6 bg-slate-900/50 rounded-2xl border border-slate-800">
                                     <label className="text-sm font-bold text-slate-400 flex items-center gap-2">

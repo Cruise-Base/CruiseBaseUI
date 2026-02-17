@@ -30,4 +30,15 @@ export const vehicleService = {
     createContract: async (data: any): Promise<void> => {
         await api.post('/api/contract', data);
     },
+
+    uploadVehiclePicture: async (vehicleId: string, file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await api.post(`/api/vehicle/${vehicleId}/picture`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    },
 };
