@@ -7,6 +7,11 @@ export const vehicleService = {
         return response.data;
     },
 
+    getVehiclesByUserId: async (userId: string): Promise<Vehicle[]> => {
+        const response = await api.get(`/api/vehicle/byuserid/${userId}`);
+        return response.data;
+    },
+
     getVehicleById: async (id: string): Promise<Vehicle> => {
         const response = await api.get(`/api/vehicle/${id}`);
         return response.data;

@@ -1,12 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 import { vehicleService } from '../services/vehicleService';
+import { authService } from '../services/authService';
+import { useAuthStore } from '../store/useAuthStore';
 import { VehicleCard } from '../components/vehicles/VehicleCard';
 import { Loader2, MapPin, Car, Navigation, ShieldCheck } from 'lucide-react';
 
 export const MyFleetPage = () => {
+    const { user } = useAuthStore();
+
+    const { data: userDetails } = useQuery({
+        queryKey: ['userDetails'],
+        queryFn: authService.getUserDetails,
+        enabled: !!user,
+    });
+
     const { data: vehicles, isLoading, isError, error } = useQuery({
-        queryKey: ['my-fleet'],
-        queryFn: vehicleService.getVehicles,
+        queryKey: ['my-fleet', userDetails?.id],
+        queryFn: () => vehicleService.getVehiclesByUserId(userDetails!.id),
+        enabled: !!userDetails?.id,
     });
 
     console.log('MyFleet data:', { vehicles, isLoading, isError, error });
