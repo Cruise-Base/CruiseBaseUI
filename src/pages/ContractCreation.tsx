@@ -133,8 +133,8 @@ export const ContractCreationPage = () => {
                                                 <div className="p-4 border border-slate-700/50 bg-slate-900/50 rounded-2xl peer-checked:border-primary peer-checked:bg-primary/10 hover:border-slate-600 transition-all flex items-center gap-4">
                                                     <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center"><Car className="w-6 h-6 text-slate-400 group-hover:text-primary transition-colors" /></div>
                                                     <div>
-                                                        <p className="font-bold text-white">{v.make} {v.model}</p>
-                                                        <p className="text-xs text-slate-500">{v.registrationNumber}</p>
+                                                        <p className="font-bold text-white">{v.brand} {v.model}</p>
+                                                        <p className="text-xs text-slate-500">{v.plateNumber}</p>
                                                     </div>
                                                 </div>
                                             </label>
@@ -215,8 +215,8 @@ export const ContractCreationPage = () => {
                                         <div className="p-4 bg-slate-900 rounded-2xl border border-slate-800 flex items-center gap-4">
                                             <Car className="w-8 h-8 text-primary" />
                                             <div>
-                                                <p className="font-bold text-white">{selectedVehicle?.make} {selectedVehicle?.model}</p>
-                                                <p className="text-xs text-slate-400">{selectedVehicle?.registrationNumber}</p>
+                                                <p className="font-bold text-white">{selectedVehicle?.brand} {selectedVehicle?.model}</p>
+                                                <p className="text-xs text-slate-400">{selectedVehicle?.plateNumber}</p>
                                             </div>
                                         </div>
 

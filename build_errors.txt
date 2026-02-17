@@ -1,3 +1,10 @@
-src/pages/AdminDashboard.tsx(3,1): error TS6133: 'walletService' is declared but its value is never read.
-src/pages/AdminDashboard.tsx(6,5): error TS6133: 'BarChart3' is declared but its value is never read.
-src/pages/AdminDashboard.tsx(16,19): error TS6133: 'vehicles' is declared but its value is never read.
+src/components/vehicles/VehicleCard.tsx(16,26): error TS2551: Property 'pictures' does not exist on type 'Vehicle'. Did you mean 'picture'?
+src/components/vehicles/VehicleCard.tsx(18,38): error TS2551: Property 'pictures' does not exist on type 'Vehicle'. Did you mean 'picture'?
+src/components/vehicles/VehicleCard.tsx(19,41): error TS2339: Property 'make' does not exist on type 'Vehicle'.
+src/components/vehicles/VehicleCard.tsx(28,30): error TS2339: Property 'licensePlate' does not exist on type 'Vehicle'.
+src/components/vehicles/VehicleCard.tsx(36,38): error TS2339: Property 'make' does not exist on type 'Vehicle'.
+src/components/vehicles/VehicleCard.tsx(38,72): error TS2339: Property 'registrationNumber' does not exist on type 'Vehicle'.
+src/pages/ContractCreation.tsx(136,96): error TS2339: Property 'make' does not exist on type 'Vehicle'.
+src/pages/ContractCreation.tsx(137,98): error TS2339: Property 'registrationNumber' does not exist on type 'Vehicle'.
+src/pages/ContractCreation.tsx(218,103): error TS2339: Property 'make' does not exist on type 'Vehicle'.
+src/pages/ContractCreation.tsx(219,105): error TS2339: Property 'registrationNumber' does not exist on type 'Vehicle'.

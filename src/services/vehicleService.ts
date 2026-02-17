@@ -1,5 +1,5 @@
 import { api } from './api';
-import type { Vehicle, ContractProgress } from '../types';
+import type { Vehicle, ContractProgress, VehicleToCreate } from '../types';
 
 export const vehicleService = {
     getVehicles: async (): Promise<Vehicle[]> => {
@@ -12,7 +12,7 @@ export const vehicleService = {
         return response.data;
     },
 
-    createVehicle: async (data: any): Promise<Vehicle> => {
+    createVehicle: async (data: VehicleToCreate): Promise<Vehicle> => {
         const response = await api.post('/api/vehicle', data);
         return response.data;
     },

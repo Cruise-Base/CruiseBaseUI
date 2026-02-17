@@ -47,11 +47,31 @@ export interface Transaction {
 
 export interface Vehicle {
     id: string;
-    make: string;
+    name: string;
+    brand: string;
     model: string;
-    licensePlate: string;
-    registrationNumber: string;
-    pictures: string[];
+    plateNumber: string;
+    color: string;
+    isActive: boolean;
+    contractType?: string;
+    tenure?: number;
+    paymentAmount?: number;
+    paymentFrequency?: string;
+    startDate?: string;
+    picture?: {
+        url: string;
+        publicId: string;
+    };
+}
+
+export interface VehicleToCreate {
+    name: string;
+    brand: string;
+    model: string;
+    plateNumber: string;
+    color: string;
+    userId?: string;
+    ownerPercentage?: number;
 }
 
 export interface ContractProgress {

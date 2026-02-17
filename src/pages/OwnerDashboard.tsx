@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { walletService } from '@/services/walletService';
 import { vehicleService } from '@/services/vehicleService';
 import { BalanceCard } from '../components/wallet/BalanceCard';
 import { TransactionHistory } from '../components/wallet/TransactionHistory';
 import { ContractProgressBar } from '../components/vehicles/ContractProgressBar';
-import { Briefcase, Users, TrendingUp, Loader2, PieChart } from 'lucide-react';
+import { AddVehicleModal } from '../components/vehicles/AddVehicleModal';
+import { Briefcase, Users, TrendingUp, Loader2, PieChart, Plus } from 'lucide-react';
 
 const OwnerDashboard = () => {
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const { data: wallet, isLoading: isWalletLoading } = useQuery({
         queryKey: ['wallet-balance'],
         queryFn: walletService.getBalance,
@@ -34,6 +37,21 @@ const OwnerDashboard = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Header with Action */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold text-white">Fleet Overview</h2>
+                    <p className="text-sm text-slate-500">Manage your vehicles and monitor performance</p>
+                </div>
+                <button
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 group"
+                >
+                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                    Add Vehicle
+                </button>
+            </div>
+
             {/* Top Section: Balance & Fleet Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
@@ -114,6 +132,11 @@ const OwnerDashboard = () => {
                     <TransactionHistory transactions={transactions?.transactions || []} />
                 </div>
             </div>
+
+            <AddVehicleModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+            />
         </div>
     );
 };

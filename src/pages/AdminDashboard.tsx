@@ -1,16 +1,20 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { vehicleService } from '../services/vehicleService';
+import { AddVehicleModal } from '../components/vehicles/AddVehicleModal';
 import {
     Users,
     Car,
     ShieldAlert,
     TrendingUp,
     ArrowUpRight,
-    Loader2
+    Loader2,
+    Plus
 } from 'lucide-react';
 
 const AdminDashboard = () => {
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const { isLoading: isVehiclesLoading } = useQuery({
         queryKey: ['all-vehicles'],
         queryFn: vehicleService.getVehicles,
@@ -33,6 +37,21 @@ const AdminDashboard = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Header with Action */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold text-white">System Administration</h2>
+                    <p className="text-sm text-slate-500">Monitor system performance and manage assets</p>
+                </div>
+                <button
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 group"
+                >
+                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                    Add Vehicle
+                </button>
+            </div>
+
             {/* Overview Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat) => (
@@ -103,6 +122,11 @@ const AdminDashboard = () => {
                     </button>
                 </div>
             </div>
+
+            <AddVehicleModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+            />
         </div>
     );
 };

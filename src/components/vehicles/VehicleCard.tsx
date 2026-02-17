@@ -13,10 +13,10 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
             className="bg-[#1e293b]/50 border border-slate-800 rounded-3xl overflow-hidden hover:border-primary/50 transition-all cursor-pointer group"
         >
             <div className="relative h-48 w-full bg-slate-900">
-                {vehicle.pictures?.[0] ? (
+                {vehicle.picture?.url ? (
                     <img
-                        src={vehicle.pictures[0]}
-                        alt={`${vehicle.make} ${vehicle.model}`}
+                        src={vehicle.picture.url}
+                        alt={`${vehicle.brand} ${vehicle.model}`}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                 ) : (
@@ -25,7 +25,7 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                     </div>
                 )}
                 <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
-                    {vehicle.licensePlate}
+                    {vehicle.plateNumber}
                 </div>
             </div>
 
@@ -33,9 +33,9 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
-                            {vehicle.make} {vehicle.model}
+                            {vehicle.brand} {vehicle.model}
                         </h3>
-                        <p className="text-sm text-slate-500">{vehicle.registrationNumber}</p>
+                        <p className="text-sm text-slate-500">{vehicle.plateNumber}</p>
                     </div>
                     <div className="p-2 bg-secondary/10 rounded-xl">
                         <ShieldCheck className="w-5 h-5 text-secondary" />
