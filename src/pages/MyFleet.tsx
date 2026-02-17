@@ -14,10 +14,17 @@ export const MyFleetPage = () => {
         enabled: !!user,
     });
 
+    const effectiveUserId = userDetails?.id || (userDetails as any)?.Id || user?.id;
+
     const { data: vehicles, isLoading, isError, error } = useQuery({
-        queryKey: ['my-fleet', userDetails?.id],
-        queryFn: () => vehicleService.getVehiclesByUserId(userDetails!.id),
-        enabled: !!userDetails?.id,
+        queryKey: ['my-fleet', effectiveUserId],
+        queryFn: async () => {
+            console.log('Fetching fleet for user:', effectiveUserId);
+            const data = await vehicleService.getVehiclesByUserId(effectiveUserId!);
+            console.log('Fetched vehicles:', data);
+            return data;
+        },
+        enabled: !!effectiveUserId,
     });
 
     console.log('MyFleet data:', { vehicles, isLoading, isError, error });
@@ -44,8 +51,8 @@ export const MyFleetPage = () => {
         );
     }
 
-    const vehicleList = Array.isArray(vehicles) ? vehicles : [];
-    const activeVehicles = vehicleList.filter(v => v.isActive);
+    const vehicleList: any[] = Array.isArray(vehicles) ? vehicles : [];
+    const activeVehicles = vehicleList.filter(v => v.isActive || v.IsActive);
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -155,7 +162,7 @@ export const MyFleetPage = () => {
             {/* Vehicle Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {vehicleList.map((vehicle) => (
-                    <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                    <VehicleCard key={vehicle.id || vehicle.Id} vehicle={vehicle} />
                 ))}
             </div>
 

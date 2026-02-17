@@ -7,10 +7,16 @@ interface VehicleCardProps {
 }
 
 export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
+    // Handle both camelCase and PascalCase properties
+    const v = vehicle as any;
+    const name = vehicle.name || v.Name;
+    const plateNumber = vehicle.plateNumber || v.PlateNumber;
+    const picture = vehicle.picture || v.Picture;
+
     const getPictureUrl = () => {
-        if (!vehicle.picture) return null;
-        if (typeof vehicle.picture === 'string') return vehicle.picture;
-        return vehicle.picture.url;
+        if (!picture) return null;
+        if (typeof picture === 'string') return picture;
+        return picture.url || picture.Url;
     };
 
     const pictureUrl = getPictureUrl();
@@ -24,7 +30,7 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                 {pictureUrl ? (
                     <img
                         src={pictureUrl}
-                        alt={vehicle.name}
+                        alt={name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                 ) : (
@@ -33,7 +39,7 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                     </div>
                 )}
                 <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
-                    {vehicle.plateNumber}
+                    {plateNumber}
                 </div>
             </div>
 
@@ -41,9 +47,9 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
-                            {vehicle.name}
+                            {name}
                         </h3>
-                        <p className="text-sm text-slate-500">{vehicle.plateNumber}</p>
+                        <p className="text-sm text-slate-500">{plateNumber}</p>
                     </div>
                     <div className="p-2 bg-secondary/10 rounded-xl">
                         <ShieldCheck className="w-5 h-5 text-secondary" />
