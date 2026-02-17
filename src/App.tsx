@@ -7,6 +7,7 @@ import { RegisterPage } from '@/pages/Register';
 import { ForgotPasswordPage } from '@/pages/ForgotPassword';
 import { ResetPasswordPage } from '@/pages/ResetPassword';
 import { ProfilePage } from '@/pages/Profile';
+import { MyFleetPage } from '@/pages/MyFleet';
 import DriverDashboard from '@/pages/DriverDashboard';
 import OwnerDashboard from '@/pages/OwnerDashboard';
 import AdminDashboard from '@/pages/AdminDashboard';
@@ -49,6 +50,7 @@ function App() {
 
           <Route element={<ProtectedRoute allowedRoles={['Owner']} />}>
             <Route path="/owner" element={<OwnerDashboard />} />
+            <Route path="/owner/fleet" element={<MyFleetPage />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['Admin', 'SuperAdmin']} />}>
