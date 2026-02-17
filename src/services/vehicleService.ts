@@ -11,13 +11,9 @@ export const vehicleService = {
         return [];
     },
 
-    getVehiclesByUserId: async (userId: string): Promise<Vehicle[]> => {
+    getVehiclesByUserId: async (userId: string): Promise<any> => {
         const response = await api.get(`/api/vehicle/byuserid/${userId}`);
-        const data = response.data;
-        if (Array.isArray(data)) return data;
-        if (data?.data && Array.isArray(data.data)) return data.data;
-        if (data?.Data && Array.isArray(data.Data)) return data.Data;
-        return [];
+        return response.data;
     },
 
     getVehicleById: async (id: string): Promise<Vehicle> => {

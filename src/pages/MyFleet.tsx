@@ -70,6 +70,16 @@ export const MyFleetPage = () => {
                 <p className="text-sm text-slate-500">Real-time status and location of your registered vehicles</p>
             </div>
 
+            {/* DEBUG SECTION - REMOVE AFTER FIXING */}
+            <div className="p-4 bg-black/50 border border-red-500/50 rounded-xl overflow-auto max-h-60 text-xs font-mono text-red-300">
+                <h4 className="font-bold underline mb-2">DEBUG INFO:</h4>
+                <p>User ID: {effectiveUserId}</p>
+                <p>Raw Vehicles Data Type: {typeof vehicles}</p>
+                <p>Is Array: {Array.isArray(vehicles) ? 'Yes' : 'No'}</p>
+                <p>Extracted List Length: {vehicleList?.length}</p>
+                <pre>{JSON.stringify(vehicles, null, 2)}</pre>
+            </div>
+
             {/* Placeholder Map Section */}
             <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
