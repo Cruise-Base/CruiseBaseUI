@@ -48,8 +48,8 @@ export interface Transaction {
 export interface Vehicle {
     id: string;
     name: string;
-    brand: string;
-    model: string;
+    brand?: string;
+    model?: string;
     plateNumber: string;
     color: string;
     isActive: boolean;
@@ -58,7 +58,7 @@ export interface Vehicle {
     paymentAmount?: number;
     paymentFrequency?: string;
     startDate?: string;
-    picture?: {
+    picture?: string | {
         url: string;
         publicId: string;
     };

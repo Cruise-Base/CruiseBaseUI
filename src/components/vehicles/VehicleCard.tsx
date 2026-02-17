@@ -7,16 +7,24 @@ interface VehicleCardProps {
 }
 
 export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
+    const getPictureUrl = () => {
+        if (!vehicle.picture) return null;
+        if (typeof vehicle.picture === 'string') return vehicle.picture;
+        return vehicle.picture.url;
+    };
+
+    const pictureUrl = getPictureUrl();
+
     return (
         <div
             onClick={onClick}
             className="bg-[#1e293b]/50 border border-slate-800 rounded-3xl overflow-hidden hover:border-primary/50 transition-all cursor-pointer group"
         >
             <div className="relative h-48 w-full bg-slate-900">
-                {vehicle.picture?.url ? (
+                {pictureUrl ? (
                     <img
-                        src={vehicle.picture.url}
-                        alt={`${vehicle.brand} ${vehicle.model}`}
+                        src={pictureUrl}
+                        alt={vehicle.name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                 ) : (
@@ -33,7 +41,7 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors">
-                            {vehicle.brand} {vehicle.model}
+                            {vehicle.name}
                         </h3>
                         <p className="text-sm text-slate-500">{vehicle.plateNumber}</p>
                     </div>

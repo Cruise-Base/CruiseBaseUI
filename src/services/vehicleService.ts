@@ -4,17 +4,17 @@ import type { Vehicle, ContractProgress, VehicleToCreate } from '../types';
 export const vehicleService = {
     getVehicles: async (): Promise<Vehicle[]> => {
         const response = await api.get('/api/vehicle');
-        return response.data;
+        return response.data.data;
     },
 
     getVehiclesByUserId: async (userId: string): Promise<Vehicle[]> => {
         const response = await api.get(`/api/vehicle/byuserid/${userId}`);
-        return response.data;
+        return response.data.data;
     },
 
     getVehicleById: async (id: string): Promise<Vehicle> => {
         const response = await api.get(`/api/vehicle/${id}`);
-        return response.data;
+        return response.data.data;
     },
 
     createVehicle: async (data: VehicleToCreate): Promise<Vehicle> => {
