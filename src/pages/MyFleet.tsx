@@ -52,8 +52,8 @@ export const MyFleetPage = () => {
     }
 
     // Strict extraction based on user-provided JSON structure
-    const vehicleList = vehicles?.data || [];
-    const activeVehicles = Array.isArray(vehicleList) ? vehicleList.filter((v: any) => v.isActive === true) : [];
+    const rawData = vehicles?.data || [];
+    const vehicleList = Array.isArray(rawData) ? rawData : [];
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -166,7 +166,7 @@ export const MyFleetPage = () => {
                         {vehicleList.length} TOTAL
                     </span>
                     <span className="px-3 py-1 bg-primary/10 rounded-full text-[10px] font-bold text-primary">
-                        {activeVehicles.length} ACTIVE
+                        {vehicleList.filter((v: any) => v.isActive).length} ACTIVE
                     </span>
                 </div>
             </div>
