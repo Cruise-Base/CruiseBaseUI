@@ -20,6 +20,7 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
     };
 
     const pictureUrl = getPictureUrl();
+    const isActive = vehicle.isActive || v.IsActive;
 
     return (
         <div
@@ -40,6 +41,9 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                 )}
                 <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
                     {plateNumber}
+                </div>
+                <div className={`absolute top-4 left-4 px-3 py-1 backdrop-blur-md rounded-full text-[10px] font-bold text-white uppercase tracking-wider border border-white/10 ${isActive ? 'bg-green-500/80' : 'bg-slate-500/80'}`}>
+                    {isActive ? 'Active' : 'Inactive'}
                 </div>
             </div>
 
