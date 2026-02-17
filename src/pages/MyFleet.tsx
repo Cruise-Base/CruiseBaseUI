@@ -51,7 +51,15 @@ export const MyFleetPage = () => {
         );
     }
 
-    const vehicleList: any[] = Array.isArray(vehicles) ? vehicles : [];
+    const getVehicleList = (data: any): any[] => {
+        if (!data) return [];
+        if (Array.isArray(data)) return data;
+        if (data.data && Array.isArray(data.data)) return data.data;
+        if (data.Data && Array.isArray(data.Data)) return data.Data;
+        return [];
+    };
+
+    const vehicleList = getVehicleList(vehicles);
     const activeVehicles = vehicleList.filter(v => v.isActive || v.IsActive);
 
     return (

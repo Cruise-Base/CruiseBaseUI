@@ -9,8 +9,8 @@ interface VehicleCardProps {
 export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
     // Handle both camelCase and PascalCase properties
     const v = vehicle as any;
-    const name = vehicle.name || v.Name;
-    const plateNumber = vehicle.plateNumber || v.PlateNumber;
+    const name = vehicle.name || v.Name || 'Unnamed Vehicle';
+    const plateNumber = vehicle.plateNumber || v.PlateNumber || 'N/A';
     const picture = vehicle.picture || v.Picture;
 
     const getPictureUrl = () => {

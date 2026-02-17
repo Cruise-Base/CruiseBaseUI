@@ -5,13 +5,19 @@ export const vehicleService = {
     getVehicles: async (): Promise<Vehicle[]> => {
         const response = await api.get('/api/vehicle');
         const data = response.data;
-        return data.data || data.Data || (Array.isArray(data) ? data : []);
+        if (Array.isArray(data)) return data;
+        if (data?.data && Array.isArray(data.data)) return data.data;
+        if (data?.Data && Array.isArray(data.Data)) return data.Data;
+        return [];
     },
 
     getVehiclesByUserId: async (userId: string): Promise<Vehicle[]> => {
         const response = await api.get(`/api/vehicle/byuserid/${userId}`);
         const data = response.data;
-        return data.data || data.Data || (Array.isArray(data) ? data : []);
+        if (Array.isArray(data)) return data;
+        if (data?.data && Array.isArray(data.data)) return data.data;
+        if (data?.Data && Array.isArray(data.Data)) return data.Data;
+        return [];
     },
 
     getVehicleById: async (id: string): Promise<Vehicle> => {
