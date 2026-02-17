@@ -51,16 +51,9 @@ export const MyFleetPage = () => {
         );
     }
 
-    const getVehicleList = (data: any): any[] => {
-        if (!data) return [];
-        if (Array.isArray(data)) return data;
-        if (data.data && Array.isArray(data.data)) return data.data;
-        if (data.Data && Array.isArray(data.Data)) return data.Data;
-        return [];
-    };
-
-    const vehicleList = getVehicleList(vehicles);
-    const activeVehicles = vehicleList.filter(v => v.isActive || v.IsActive);
+    // Strict extraction based on user-provided JSON structure
+    const vehicleList = vehicles?.data || [];
+    const activeVehicles = Array.isArray(vehicleList) ? vehicleList.filter((v: any) => v.isActive === true) : [];
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -76,6 +69,7 @@ export const MyFleetPage = () => {
                 <p>User ID: {effectiveUserId}</p>
                 <p>Raw Vehicles Data Type: {typeof vehicles}</p>
                 <p>Is Array: {Array.isArray(vehicles) ? 'Yes' : 'No'}</p>
+                <p>Vehicles.data type: {typeof vehicles?.data}</p>
                 <p>Extracted List Length: {vehicleList?.length}</p>
                 <pre>{JSON.stringify(vehicles, null, 2)}</pre>
             </div>
@@ -179,7 +173,7 @@ export const MyFleetPage = () => {
 
             {/* Vehicle Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {vehicleList.map((vehicle) => (
+                {vehicleList.map((vehicle: any) => (
                     <VehicleCard key={vehicle.id || vehicle.Id} vehicle={vehicle} />
                 ))}
             </div>
