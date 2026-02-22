@@ -74,6 +74,17 @@ export interface VehicleToCreate {
     ownerPercentage?: number;
 }
 
+export interface VehicleToUpdate {
+    name: string;
+    brand: string;
+    model: string;
+    plateNumber: string;
+    color: string;
+    userId?: string;
+    contractId?: string;
+    pictureId?: string;
+}
+
 export interface ContractProgress {
     vehicleId: string;
     totalValue: number;

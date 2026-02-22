@@ -1,5 +1,5 @@
 import { api } from './api';
-import type { Vehicle, ContractProgress, VehicleToCreate } from '../types';
+import type { Vehicle, ContractProgress, VehicleToCreate, VehicleToUpdate } from '../types';
 
 export const vehicleService = {
     getVehicles: async (): Promise<Vehicle[]> => {
@@ -39,6 +39,14 @@ export const vehicleService = {
 
     createContract: async (data: any): Promise<void> => {
         await api.post('/api/contract', data);
+    },
+
+    updateVehicle: async (id: string, data: VehicleToUpdate): Promise<void> => {
+        await api.put(`/api/vehicle/${id}`, data);
+    },
+
+    deleteVehicle: async (id: string): Promise<void> => {
+        await api.delete(`/api/vehicle/${id}`);
     },
 
     uploadVehiclePicture: async (vehicleId: string, file: File) => {
