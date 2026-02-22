@@ -54,6 +54,22 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
     const pictureUrl = getPictureUrl();
     const isActive = vehicle.isActive || v.IsActive;
 
+    const handleViewContract = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        // Determine if vehicle has a contract based on contractType or other available properties
+        const hasContract = vehicle.contractType || v.ContractType;
+
+        if (!hasContract || hasContract === 'None') {
+            toast.error("This vehicle has no active contract");
+            return;
+        }
+
+        toast('Contract details functionality coming soon', {
+            icon: 'ℹ️',
+        });
+    };
+
     return (
         <div
             onClick={onClick}
@@ -106,7 +122,10 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                     </div>
                 </div>
 
-                <button className="w-full mt-6 flex items-center justify-between px-4 py-3 bg-slate-800/50 hover:bg-primary text-white rounded-xl transition-all group/btn font-semibold text-sm">
+                <button
+                    onClick={handleViewContract}
+                    className="w-full mt-6 flex items-center justify-between px-4 py-3 bg-slate-800/50 hover:bg-primary text-white rounded-xl transition-all group/btn font-semibold text-sm"
+                >
                     View Contract Details
                     <ChevronRight className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" />
                 </button>
