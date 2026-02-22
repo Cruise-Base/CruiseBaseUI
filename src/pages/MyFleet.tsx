@@ -60,22 +60,6 @@ export const MyFleetPage = () => {
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-3xl font-bold text-white">My Fleet</h2>
-                    <p className="text-sm text-slate-500">Real-time status and location of your registered vehicles</p>
-                </div>
-                <button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 group"
-                >
-                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                    Add Vehicle
-                </button>
-            </div>
-
-            {/* Placeholder Map Section */}
             <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                 <div className="relative h-[400px] w-full bg-[#1e293b]/50 border border-slate-800 rounded-[2rem] overflow-hidden backdrop-blur-sm">
@@ -157,18 +141,27 @@ export const MyFleetPage = () => {
             </div>
 
             {/* Vehicle Grid Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h3 className="text-xl font-bold text-white flex items-center gap-3">
                     <Car className="w-6 h-6 text-primary" />
                     Fleet List
                 </h3>
-                <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 bg-slate-800 rounded-full text-[10px] font-bold text-slate-400">
-                        {vehicleList.length} TOTAL
-                    </span>
-                    <span className="px-3 py-1 bg-primary/10 rounded-full text-[10px] font-bold text-primary">
-                        {vehicleList.filter((v: any) => v.isActive).length} ACTIVE
-                    </span>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <span className="px-3 py-1 bg-slate-800 rounded-full text-[10px] font-bold text-slate-400">
+                            {vehicleList.length} TOTAL
+                        </span>
+                        <span className="px-3 py-1 bg-primary/10 rounded-full text-[10px] font-bold text-primary">
+                            {vehicleList.filter((v: any) => v.isActive).length} ACTIVE
+                        </span>
+                    </div>
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 group text-sm"
+                    >
+                        <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                        Add Vehicle
+                    </button>
                 </div>
             </div>
 
@@ -186,7 +179,7 @@ export const MyFleetPage = () => {
                     </div>
                     <h3 className="text-lg font-bold text-white">No vehicles found</h3>
                     <p className="text-sm text-slate-500 max-w-xs mx-auto mt-2">
-                        You haven't added any vehicles to your fleet yet. Click 'Add Vehicle' above to get started.
+                        You haven't added any vehicles to your fleet yet. Click 'Add Vehicle' to get started.
                     </p>
                 </div>
             )}
