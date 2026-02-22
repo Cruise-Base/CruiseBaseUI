@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { vehicleService } from '../services/vehicleService';
 import { authService } from '../services/authService';
 import { useAuthStore } from '../store/useAuthStore';
 import { VehicleCard } from '../components/vehicles/VehicleCard';
-import { Loader2, MapPin, Car, Navigation, ShieldCheck } from 'lucide-react';
+import { AddVehicleModal } from '../components/vehicles/AddVehicleModal';
+import { Loader2, MapPin, Car, Navigation, ShieldCheck, Plus } from 'lucide-react';
 
 export const MyFleetPage = () => {
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const { user } = useAuthStore();
 
     const { data: userDetails } = useQuery({
@@ -58,9 +61,18 @@ export const MyFleetPage = () => {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header */}
-            <div>
-                <h2 className="text-3xl font-bold text-white">My Fleet</h2>
-                <p className="text-sm text-slate-500">Real-time status and location of your registered vehicles</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl font-bold text-white">My Fleet</h2>
+                    <p className="text-sm text-slate-500">Real-time status and location of your registered vehicles</p>
+                </div>
+                <button
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 group"
+                >
+                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                    Add Vehicle
+                </button>
             </div>
 
             {/* Placeholder Map Section */}
@@ -174,10 +186,15 @@ export const MyFleetPage = () => {
                     </div>
                     <h3 className="text-lg font-bold text-white">No vehicles found</h3>
                     <p className="text-sm text-slate-500 max-w-xs mx-auto mt-2">
-                        You haven't added any vehicles to your fleet yet. Click 'Add Vehicle' on your dashboard to get started.
+                        You haven't added any vehicles to your fleet yet. Click 'Add Vehicle' above to get started.
                     </p>
                 </div>
             )}
+
+            <AddVehicleModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+            />
         </div>
     );
 };

@@ -1,15 +1,12 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { walletService } from '@/services/walletService';
 import { vehicleService } from '@/services/vehicleService';
 import { BalanceCard } from '../components/wallet/BalanceCard';
 import { TransactionHistory } from '../components/wallet/TransactionHistory';
 import { ContractProgressBar } from '../components/vehicles/ContractProgressBar';
-import { AddVehicleModal } from '../components/vehicles/AddVehicleModal';
-import { Briefcase, Users, TrendingUp, Loader2, PieChart, Plus } from 'lucide-react';
+import { Briefcase, Users, TrendingUp, Loader2, PieChart } from 'lucide-react';
 
 const OwnerDashboard = () => {
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const { data: wallet, isLoading: isWalletLoading } = useQuery({
         queryKey: ['wallet-balance'],
         queryFn: walletService.getBalance,
@@ -43,13 +40,6 @@ const OwnerDashboard = () => {
                     <h2 className="text-2xl font-bold text-white">Fleet Overview</h2>
                     <p className="text-sm text-slate-500">Manage your vehicles and monitor performance</p>
                 </div>
-                <button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 group"
-                >
-                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                    Add Vehicle
-                </button>
             </div>
 
             {/* Top Section: Balance & Fleet Stats */}
@@ -127,16 +117,10 @@ const OwnerDashboard = () => {
                     </div>
                 </div>
 
-                {/* Transactions */}
                 <div className="bg-[#1e293b]/20 rounded-3xl p-1 border border-transparent">
                     <TransactionHistory transactions={transactions?.transactions || []} />
                 </div>
             </div>
-
-            <AddVehicleModal
-                isOpen={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
-            />
         </div>
     );
 };
