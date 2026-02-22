@@ -1,5 +1,5 @@
 import type { Vehicle } from '@/types';
-import { Car, Fuel, Settings2, ChevronRight, Edit, Trash2 } from 'lucide-react';
+import { Car, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { vehicleService } from '@/services/vehicleService';
 import { useQueryClient } from '@tanstack/react-query';
@@ -103,17 +103,6 @@ export const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
                         >
                             <Trash2 className="w-5 h-5 text-slate-400 group-hover/delete:text-red-500 transition-colors" />
                         </button>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800/50">
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <Fuel className="w-4 h-4" />
-                        <span className="text-xs font-medium">Automatic</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <Settings2 className="w-4 h-4" />
-                        <span className="text-xs font-medium">Hybrid</span>
                     </div>
                 </div>
 
